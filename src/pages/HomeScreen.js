@@ -1,7 +1,7 @@
 import {withNavigation} from 'react-navigation';
 import React, {useState, useEffect} from 'react';
 import {ScrollView, Text, FlatList, View, StyleSheet} from 'react-native';
-import {Card, ListItem, Button, Icon} from 'react-native-elements';
+import {Card, Button, Icon} from 'react-native-elements';
 import axios from 'axios';
 
 const styles = StyleSheet.create({
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   lastPage: {paddingBottom: 10},
 });
 
-function HomeScreen() {
+function HomeScreen({navigation}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [cards, setCards] = useState([]);
@@ -136,6 +136,11 @@ function HomeScreen() {
                     icon={<Icon name="search" color="#ffffff" />}
                     buttonStyle={styles.viewCardButton}
                     title="View Full Card"
+                    onPress={() => {
+                      navigation.navigate('CardDetailScreen', {
+                        imageUrl: item.imageUrl,
+                      });
+                    }}
                   />
                 </Card>
               );
