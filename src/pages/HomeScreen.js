@@ -65,13 +65,15 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     borderRadius: 10,
   },
+  flatListFooterStyle: {paddingTop: 25},
+  lastPage: {paddingBottom: 10},
 });
 
 function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [cards, setCards] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     (async function() {
@@ -91,54 +93,83 @@ function HomeScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       {loading === true && <Text style={styles.textError}>Loading...</Text>}
       {error !== '' && <Text>error</Text>}
-      {cards.length !== 0 && (
-        <FlatList
-          data={cards}
-          renderItem={({item}) => {
-            return (
-              <Card title={item.name} containerStyle={styles.card}>
-                <View style={styles.cardContainer}>
-                  {item.colors.length !== 0 && (
-                    <View>
-                      <Text style={styles.headerText}>Colors:</Text>
-                      <View style={styles.manaContainer}>
-                        {item.colors.map(color => {
-                          if (color === 'Blue') {
-                            return <View style={styles.blueMana} />;
-                          } else if (color === 'Red') {
-                            return <View style={styles.redMana} />;
-                          } else if (color === 'Green') {
-                            return <View style={styles.greenMana} />;
-                          } else if (color === 'Black') {
-                            return <View style={styles.blackMana} />;
-                          } else if (color === 'White') {
-                            return <View style={styles.whiteMana} />;
-                          } else {
-                            return <View style={styles.colorlessMana} />;
-                          }
-                        })}
+      {cards.length !== 0 && loading === false && (
+        <View style={{paddingBottom: 50}}>
+          <FlatList
+            data={cards}
+            renderItem={({item}) => {
+              return (
+                <Card title={item.name} containerStyle={styles.card}>
+                  <View style={styles.cardContainer}>
+                    {item.colors.length !== 0 && (
+                      <View>
+                        <Text style={styles.headerText}>Colors:</Text>
+                        <View style={styles.manaContainer}>
+                          {item.colors.map(color => {
+                            if (color === 'Blue') {
+                              return <View style={styles.blueMana} />;
+                            } else if (color === 'Red') {
+                              return <View style={styles.redMana} />;
+                            } else if (color === 'Green') {
+                              return <View style={styles.greenMana} />;
+                            } else if (color === 'Black') {
+                              return <View style={styles.blackMana} />;
+                            } else if (color === 'White') {
+                              return <View style={styles.whiteMana} />;
+                            } else {
+                              return <View style={styles.colorlessMana} />;
+                            }
+                          })}
+                        </View>
                       </View>
+                    )}
+                  </View>
+                  <View style={styles.paddingDivider}>
+                    <Text style={styles.headerText}>Type:</Text>
+                    <Text>{item.type}</Text>
+                  </View>
+                  <View style={styles.paddingDivider}>
+                    <Text style={styles.headerText}>Set-Name:</Text>
+                    <Text>{item.setName}</Text>
+                  </View>
+                  <Button
+                    icon={<Icon name="search" color="#ffffff" />}
+                    buttonStyle={styles.viewCardButton}
+                    title="View Full Card"
+                  />
+                </Card>
+              );
+            }}
+            keyExtractor={card => card.multiverseid}
+            ListFooterComponent={() => {
+              return (
+                <View>
+                  {currentPage !== 1 && (
+                    <View style={styles.lastPage}>
+                      <Button
+                        buttonStyle={styles.viewCardButton}
+                        title="Last Page"
+                        onPress={() => {
+                          setLoading(true);
+                          setCurrentPage(currentPage - 1);
+                        }}
+                      />
                     </View>
                   )}
+                  <Button
+                    buttonStyle={styles.viewCardButton}
+                    title="Next Page"
+                    onPress={() => {
+                      setLoading(true);
+                      setCurrentPage(currentPage + 1);
+                    }}
+                  />
                 </View>
-                <View style={styles.paddingDivider}>
-                  <Text style={styles.headerText}>Type:</Text>
-                  <Text>{item.type}</Text>
-                </View>
-                <View style={styles.paddingDivider}>
-                  <Text style={styles.headerText}>Set-Name:</Text>
-                  <Text>{item.setName}</Text>
-                </View>
-                <Button
-                  icon={<Icon name="search" color="#ffffff" />}
-                  buttonStyle={styles.viewCardButton}
-                  title="View Full Card"
-                />
-              </Card>
-            );
-          }}
-          keyExtractor={card => card.multiverseid}
-        />
+              );
+            }}
+            ListFooterComponentStyle={styles.flatListFooterStyle}
+          />
+        </View>
       )}
     </ScrollView>
   );
